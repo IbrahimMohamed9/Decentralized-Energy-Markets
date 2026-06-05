@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Decentralized Energy Market</title>
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="favicon.svg" />
+    <meta name="theme-color" content="#2196F3" />
+    <!-- Scripts and Styles -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.2.2/web3.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="app.css" />
+    <script type="module" src="js/app.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-bolt"></i> Decentralized Energy Market</h1>
+        <p>Buy and sell renewable energy directly on the blockchain</p>
+      </header>
+
+      <div class="status-container">
+        <div class="status-row">
+          <p id="statusDisplay">
+            <i class="fas fa-spinner fa-spin"></i> Checking for MetaMask...
+          </p>
+          <button
+            id="connectButton"
+            class="action-button"
+            onclick="connectWallet()"
+          >
+            <i class="fas fa-wallet"></i> Connect Wallet
+          </button>
+        </div>
+        <div
+          class="balance-container"
+          id="balanceContainer"
+          style="display: none"
+        >
+          <p>
+            <i class="fas fa-coins"></i> Your Balance:
+            <span id="userBalance">0</span> ETH
+          </p>
+          <button
+            class="refresh-button"
+            onclick="refreshBalance()"
+            title="Refresh Balance"
+          >
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2><i class="fas fa-solar-panel"></i> Create Energy Offer</h2>
+        <div id="offerForm" style="display: none">
+          <div class="form-group">
+            <label for="energyAmount"
+              ><i class="fas fa-bolt"></i> Energy Amount (kWh):</label
+            >
+            <input
+              type="number"
+              id="energyAmount"
+              placeholder="Enter energy amount"
+              min="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="pricePerUnit"
+              ><i class="fas fa-tag"></i> Price Per Unit (ETH):</label
+            >
+            <input
+              type="number"
+              id="pricePerUnit"
+              placeholder="Enter price per kWh"
+              min="0.000001"
+              step="0.000001"
+            />
+          </div>
+          <button class="action-button" onclick="addOffer()">
+            <i class="fas fa-plus-circle"></i> Add Energy Offer
+          </button>
+        </div>
+      </div>
+
+      <div class="section offers-container">
+        <div class="tabs">
+          <button class="tab-button active" data-tab="available">
+            <i class="fas fa-list"></i> Available Offers
+          </button>
+          <button class="tab-button" data-tab="my-offers">
+            <i class="fas fa-solar-panel"></i> My Offers
+          </button>
+          <button class="tab-button" data-tab="bought">
+            <i class="fas fa-shopping-cart"></i> Bought Offers
+          </button>
+          <button class="tab-button" data-tab="sold">
+            <i class="fas fa-hand-holding-usd"></i> Sold Offers
+          </button>
+          <button
+            class="tab-button"
+            id="admin-tab-button"
+            data-tab="admin"
+            style="display: none"
+          >
+            <i class="fas fa-list-alt"></i> All Offers
+          </button>
+        </div>
+
+        <div class="tab-content active" id="available-tab">
+          <h2><i class="fas fa-list"></i> Available Energy Offers</h2>
+          <div id="offers" class="offers-grid">
+            <p class="empty-state">
+              <i class="fas fa-plug"></i> Please connect your wallet to view
+              available energy offers
+            </p>
+          </div>
+        </div>
+
+        <div class="tab-content" id="my-offers-tab">
+          <h2><i class="fas fa-solar-panel"></i> My Energy Offers</h2>
+          <div id="my-offers" class="offers-grid">
+            <p class="empty-state">
+              <i class="fas fa-plug"></i> Please connect your wallet to view
+              your energy offers
+            </p>
+          </div>
+        </div>
+
+        <div class="tab-content" id="bought-tab">
+          <h2><i class="fas fa-shopping-cart"></i> Energy I've Purchased</h2>
+          <div id="bought-offers" class="offers-grid">
+            <p class="empty-state">
+              <i class="fas fa-plug"></i> Please connect your wallet to view
+              your purchased energy
+            </p>
+          </div>
+        </div>
+
+        <div class="tab-content" id="sold-tab">
+          <h2><i class="fas fa-hand-holding-usd"></i> Energy I've Sold</h2>
+          <div id="sold-offers" class="offers-grid">
+            <p class="empty-state">
+              <i class="fas fa-plug"></i> Please connect your wallet to view
+              your sold energy
+            </p>
+          </div>
+        </div>
+
+        <div class="tab-content" id="admin-tab">
+          <h2><i class="fas fa-list-alt"></i> All Energy Offers</h2>
+
+          <div id="admin-controls" class="admin-controls" style="display: none">
+            <h3>
+              <i class="fas fa-user-shield"></i> Market Controls (Admin Only)
+            </h3>
+            <div class="admin-buttons">
+              <button
+                class="action-button pause-button"
+                onclick="pauseMarket()"
+              >
+                <i class="fas fa-pause-circle"></i> Pause Market
+              </button>
+              <button
+                class="action-button resume-button"
+                onclick="resumeMarket()"
+              >
+                <i class="fas fa-play-circle"></i> Resume Market
+              </button>
+            </div>
+          </div>
+
+          <div id="all-offers" class="offers-grid">
+            <p class="empty-state">
+              <i class="fas fa-plug"></i> Please connect your wallet to view all
+              energy offers
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section withdraw-section">
+        <h2><i class="fas fa-money-bill-wave"></i> Withdraw Funds</h2>
+        <p>Withdraw your earnings from sold energy offers to your wallet</p>
+        <button
+          id="withdrawButton"
+          class="action-button withdraw-button"
+          onclick="withdrawFunds()"
+          disabled
+        >
+          <i class="fas fa-wallet"></i> Withdraw Funds
+        </button>
+      </div>
+
+      <footer>
+        <p>
+          <i class="fas fa-bolt"></i> © 2025 Decentralized Energy Markets -
+          Powered by Ethereum <i class="fab fa-ethereum"></i>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

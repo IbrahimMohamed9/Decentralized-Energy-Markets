@@ -1,0 +1,9 @@
+You can verify 
+npx hardhat verify "0x002269Cf98F9838a45946738167CDb7eaeE5e9b2" --network sepolia
+
+npx hardhat vars set SEPOLIA_PRIVATE_KEY
+53b76585abd0db8fa09cca3b7fd3a1fd9d7eda8119d7e19b818819e3c7e11da9
+
+npx hardhat vars set ALCHEMY_API_KEY eaHXlITPeC6w-eYP9vndKCMW_sCLSE31
+npx hardhat vars set SEPOLIA_PRIVATE_KEY 53b76585abd0db8fa09cca3b7fd3a1fd9d7eda8119d7e19b818819e3c7e11da9
+npx hardhat vars set ETHERSCAN_API_KEY KS5UZGMQIRJN8NI5PXAEVPCW5R4UXXP49Y
